@@ -23,11 +23,12 @@ var (
 )
 
 func Post() {
+	//create new request
 	request, err = http.NewRequest(http.MethodGet, "https://jsonplaceholder.typicode.com/posts/1", nil)
 	if err != nil {
 		log.Fatalf("Error making request: '%v'\n", err)
 	}
-
+	//sedn request via client
 	response, err = client.Do(request)
 	if err != nil {
 		log.Fatal("Err Getting response")
@@ -44,7 +45,7 @@ func Post() {
 		log.Printf("Error parsing json: '%v'", err)
 	}
 	fmt.Print(userPost.Title)
-
+	//writing to dB...and stuff
 	dB, err = InitDB()
 	if err != nil {
 		log.Fatal(err)
@@ -67,6 +68,7 @@ type Comment struct {
 }
 
 func Comments() {
+	//create new request
 	request, err = http.NewRequest(http.MethodGet, "https://jsonplaceholder.typicode.com/comments?postid=1", nil)
 	if err != nil {
 		log.Fatalf("Error making request: %v", err)
