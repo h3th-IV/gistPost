@@ -71,36 +71,36 @@ func Comments() {
 	//create new request
 	request, err = http.NewRequest(http.MethodGet, "https://jsonplaceholder.typicode.com/comments?postid=1", nil)
 	if err != nil {
-		log.Fatalf("Error making request: %v", err)
+		log.Printf("Error making request: %v", err)
 	}
 
 	response, err = client.Do(request)
 	if err != nil {
-		log.Fatalf("Error Fetching response: %v", err)
+		log.Printf("Error Fetching response: %v", err)
 	}
 
 	defer response.Body.Close()
 
 	raw, err = io.ReadAll(response.Body)
 	if err != nil {
-		log.Fatalf("Err Reading Response: %v", err)
+		log.Printf("Err Reading Response: %v", err)
 	}
 	var comments []Comment
 	err = json.Unmarshal(raw, &comments)
 	if err != nil {
-		log.Fatalf("Error decoding json ogject: %v", err)
+		log.Printf("Error decoding json ogject: %v", err)
 	}
 
 	dB, err = InitDB()
 	if err != nil {
-		log.Fatalf("Err connecting to database: %v", err)
+		log.Printf("Err connecting to database: %v", err)
 	}
 	defer CloseDB()
 
 	for _, comment := range comments {
 		_, err = dB.Exec(`insert into comments (postid, id , name, email, body) values ($1, $2, $3, $4, $5)`, comment.PostID, comment.ID, comment.Name, comment.Email, comment.Body)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		fmt.Printf("PostID: %d\nID: %d\nName: %s\nEmail: %s\nBody: %s\n\n",
 			comment.PostID, comment.ID, comment.Name, comment.Email, comment.Body)
