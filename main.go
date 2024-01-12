@@ -1,15 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/h3th-IV/gistPost/database"
+	"github.com/h3th-IV/gistPost/internal"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	//init env varaibles
+	// init env varaibles
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("error loading files: %v", err)
@@ -22,26 +22,17 @@ func main() {
 	}
 	//always remember to shut it down
 	defer database.CloseDB()
+	var (
+		// post = &internal.Post{
+		// 	API: "https://jsonplaceholder.typicode.com/posts/1",
+		// 	DB:  dB,
+		// }
 
-	//get comments
-	comments := database.Comments()
-	for _, comment := range *comments {
-		_, err = dB.Exec(`insert into comments (postid, id , name, email, body) values ($1, $2, $3, $4, $5)`, comment.PostID, comment.ID, comment.Name, comment.Email, comment.Body)
-		if err != nil {
-			log.Println(err)
+		comments = &internal.Comments{
+			API: "https://jsonplaceholder.typicode.com/comments?postid=1",
+			DB:  dB,
 		}
-		fmt.Printf("PostID: %d\nID: %d\nName: %s\nEmail: %s\nBody: %s\n\n",
-			comment.PostID, comment.ID, comment.Name, comment.Email, comment.Body)
-		if comment.PostID == 2 {
-			break
-		}
-	}
-
-	//get user1 post
-	userPost := database.Post()
-	_, err = dB.Exec(`INSERT INTO posts(userid, id, title, body) values ($1, $2, $3, $4);`, userPost.UserId, userPost.Id, userPost.Title, userPost.Body)
-	fmt.Println("postTItle: ", userPost.Title)
-	if err != nil {
-		log.Fatal(err)
-	}
+	)
+	// post.WriteToDB()
+	comments.WriteToDB()
 }
